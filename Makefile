@@ -28,8 +28,8 @@ endif
 
 CFLAGS+=$(OPTS)
 
-OBJ= arith.o assert.o except.o mem.o stack.o
-EXECOBJA= cii.o test_arith.o test_stack.o
+OBJ= arith.o assert.o except.o mem.o stack.o list.o atom.o
+EXECOBJA= cii.o test_arith.o test_stack.o test_list.o
 
 EXECOBJ = $(addprefix $(OBJDIR), $(EXECOBJA))
 OBJS = $(addprefix $(OBJDIR), $(OBJ))

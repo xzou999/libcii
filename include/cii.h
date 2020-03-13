@@ -3,6 +3,13 @@
 
 #include <setjmp.h>
 
+//////////////////////////////// atomic module ///////////////////////////////
+extern       int   Atom_length(const char *str);
+extern const char *Atom_new   (const char *str, int len);
+extern const char *Atom_string(const char *str);
+extern const char *Atom_int   (long n);
+
+
 ////////////////////////////// except module /////////////////////////////////
 #define RAISE(e) Except_raise(&(e), __FILE__, __LINE__)
 #define RERAISE Except_raise(Except_frame.exception, Except_frame.file, Except_frame.line)
@@ -77,7 +84,6 @@ Except_Frame *Except_stack;
 const Except_T Assert_Failed;
 void Except_raise(const Except_T *e, const char *file, int line);
 
-
 /////////////////////////////assert module////////////////////////////
 #undef assert
 #ifdef NDEBUG
@@ -128,4 +134,32 @@ extern void Stack_push(Stack_T *stk, void *x);
 extern void *Stack_pop(Stack_T *stk);
 extern void Stack_free(Stack_T **stk);
 
-#endif //CII_INCLUDED
+///////////////////////list module//////////////////////////////
+//#define T List_T
+// typedef struct T *T;
+// struct T {
+// 	T rest;
+// 	void *first;
+// };
+typedef struct _List_T List_T;
+struct _List_T
+{
+    List_T *rest;
+    void *first;
+};
+
+extern List_T *List_append(List_T *list, List_T *tail);
+extern List_T *List_copy(List_T *list);
+extern List_T *List_list(void *x, ...);
+extern List_T *List_pop(List_T *list, void **x);
+extern List_T *List_push(List_T *list, void *x);
+extern List_T *List_reverse(List_T *list);
+extern int List_length(List_T *list);
+extern void List_free(List_T **list);
+extern void List_map(List_T *list, void apply(void **x, void *cl), void *cl);
+extern void **List_toArray(List_T *list, void *end);
+//#undef T
+
+
+
+#endif // CII_INCLUDED

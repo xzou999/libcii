@@ -4,11 +4,10 @@
 #include <setjmp.h>
 
 //////////////////////////////// atomic module ///////////////////////////////
-extern       int   Atom_length(const char *str);
-extern const char *Atom_new   (const char *str, int len);
+extern int Atom_length(const char *str);
+extern const char *Atom_new(const char *str, int len);
 extern const char *Atom_string(const char *str);
-extern const char *Atom_int   (long n);
-
+extern const char *Atom_int(long n);
 
 ////////////////////////////// except module /////////////////////////////////
 #define RAISE(e) Except_raise(&(e), __FILE__, __LINE__)
@@ -160,6 +159,31 @@ extern void List_map(List_T *list, void apply(void **x, void *cl), void *cl);
 extern void **List_toArray(List_T *list, void *end);
 //#undef T
 
+////////////////////////////table module/////////////////////////////
+//#define T Table_T
+typedef struct _Table_T Table_T;
+struct _Table_T
+{
+    int size;
+    int (*cmp)(const void *x, const void *y);
+    unsigned (*hash)(const void *key);
+    int length;
+    unsigned timestamp;
+    struct binding
+    {
+        struct binding *link;
+        const void *key;
+        void *value;
+    } * *buckets;
+};
 
+extern Table_T *Table_new(int hint, int cmp(const void *x, const void *y), unsigned hash(const void *key));
+extern void Table_free(Table_T **table);
+extern int Table_length(Table_T *table);
+extern void *Table_put(Table_T *table, const void *key, void *value);
+extern void *Table_get(Table_T *table, const void *key);
+extern void *Table_remove(Table_T *table, const void *key);
+extern void Table_map(Table_T *table, void apply(const void *key, void **value, void *cl), void *cl);
+extern void **Table_toArray(Table_T *table, void *end);
 
 #endif // CII_INCLUDED

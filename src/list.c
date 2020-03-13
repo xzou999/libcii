@@ -66,6 +66,7 @@ List_T *List_pop(List_T *list, void **x)
         return list;
 }
 
+//this will change the input list! should wrap the input list with List_copy!
 List_T *List_reverse(List_T *list)
 {
     List_T *head = NULL;

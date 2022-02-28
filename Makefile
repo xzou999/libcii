@@ -1,17 +1,18 @@
 DEBUG=1
-OS_MAC=1
 
+OSTYPE:=$(shell uname)
 VPATH=./src:./test
 SLIB=libcii.so
 ALIB=libcii.a
 EXEC=cii
 OBJDIR=./obj/
-CC=gcc
-CPP=g++
 
-ifeq ($(OS_MAC), 1)
+ifeq ($(OSTYPE), "Darwin") # for MacOS
 CC=clang
 CPP=clang++
+else
+CC=gcc
+CPP=g++
 endif
 
 AR=ar

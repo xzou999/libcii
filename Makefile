@@ -2,9 +2,9 @@ DEBUG=1
 
 OSTYPE:=$(shell uname)
 VPATH=./src:./test
-SLIB=libcii.so
-ALIB=libcii.a
-EXEC=cii
+SLIB=./results/libcii.so
+ALIB=./results/libcii.a
+EXEC=./results/cii ./results/test_arith ./results/test_stack ./results/test_list ./results/test_table
 OBJDIR=./obj/
 
 ifeq ($(OSTYPE), "Darwin") # for MacOS

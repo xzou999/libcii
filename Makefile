@@ -4,7 +4,7 @@ OSTYPE:=$(shell uname)
 VPATH=./src:./test
 SLIB=./results/libcii.so
 ALIB=./results/libcii.a
-EXEC=./results/cii ./results/test_arith ./results/test_stack ./results/test_list ./results/test_table
+EXEC=./results/cii
 OBJDIR=./obj/
 
 ifeq ($(OSTYPE), "Darwin") # for MacOS

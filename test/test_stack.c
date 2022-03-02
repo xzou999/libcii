@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <stdbool.h> //new in C99 
+#include <stdbool.h> //new in C99
 #include "cii.h"
 
 void test_stack()
 {
-    printf("#############test stack module###########\n");
+    printf("-----------------test stack module-----------------\n");
 
     Stack_T *new_stack = Stack_new();
 
@@ -31,11 +31,12 @@ void test_stack()
     char *pop_y  = Stack_pop(new_stack);
     int *pop_x   = Stack_pop(new_stack);
 
-    printf("pop x:%d,y:%c,z:%f,a:%s\n", x, y, z, a);
+    // printf("pop x:%d,y:%c,z:%f,a:%s\n", x, y, z, a);
+    printf("pop x:%d,y:%c,z:%f,a:%s\n", *pop_x, *pop_y, *pop_z, pop_a);
 
     //Stack_free(&new_stack);
     is_stack_empty = Stack_empty(new_stack);
     printf("now new stack is empty?%s\n", is_stack_empty?"yes":"no");
 
-    printf("####################end##################\n");
+    printf("\n\n");
 }

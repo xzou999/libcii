@@ -20,7 +20,7 @@ static int compare(void *x, void *y)
 
 void test_list()
 {
-    printf("####################test list######################\n");
+    printf("---------------------test list--------------------------\n");
 
     List_T *p1, *p2;
     p1 = List_list(NULL);
@@ -71,17 +71,14 @@ void test_list()
     //TODO: function compare need definition
     //printf("item of list p3 after to array:\n");
     char **array = (char **)List_toArray(p3, NULL);
-    printf("###before qsort, array of p3 is:\n");
+    printf("before qsort, array of p3 is:\n");
     for(int i = 0; array[i]; i++)
         printf("%s\n", array[i]);
     qsort((void **)array, List_length(p3), sizeof(*array),(int (*)(const void*, const void*))compare);
-    printf("###after qsort, array of p3 is:\n");
+    printf("after qsort, array of p3 is:\n");
     for (int i = 0; array[i]; i++)
         printf("%s\n", array[i]);
     FREE(array);
 
-
-
-
-    printf("######################end##########################\n");
+    printf("\n\n");
 }

@@ -3,7 +3,7 @@
 
 void test_arith()
 {
-    printf("#############test arith module###########\n");
+    printf("------------------------test arith module--------------------\n");
 
     int x = 97;
     int y = 9;
@@ -22,5 +22,5 @@ void test_arith()
     printf("for x=%d and y=%d, floor=%d\n", x, y, floor);
     printf("for x=%d and y=%d, ceiling=%d\n", x, y, ceiling);
 
-    printf("##################end####################\n");
+    printf("\n\n");
 }

@@ -5,12 +5,23 @@
 
 //#include "mem.h"
 #define NELEMS(x) ((sizeof(x)) / (sizeof((x)[0])))
+
+#if 0
 static struct atom
 {
     struct atom *link;
     int len;
     char *str;
 } * buckets[2048];
+#else
+static struct atom
+{
+    struct atom *link;
+    int len;
+    char str[];
+} * buckets[2048];
+#endif
+
 static unsigned long scatter[] = {
     2078917053, 143302914,  1027100827, 1953210302, 755253631,  2002600785, 1405390230, 45248011,   1099951567,
     433832350,  2018585307, 438263339,  813528929,  1703199216, 618906479,  573714703,  766270699,  275680090,
@@ -85,14 +96,22 @@ const char *Atom_new(const char *str, int len)
             if (i == len)
                 return p->str;
         }
+#if 0
     p      = ALLOC(sizeof(*p) + len + 1);
     p->len = len;
     p->str = (char *)(p + 1);
     if (len > 0)
         memcpy(p->str, str, len);
     p->str[len] = '\0';
-    p->link     = buckets[h];
-    buckets[h]  = p;
+#else
+    p      = ALLOC(sizeof(*p) + len + 1);
+    p->len = len;
+    if (len > 0)
+        memcpy(p->str, str, len);
+    p->str[len] = '\0';
+#endif
+    p->link    = buckets[h];
+    buckets[h] = p;
     return p->str;
 }
 

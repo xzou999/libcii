@@ -6,21 +6,13 @@
 //#include "mem.h"
 #define NELEMS(x) ((sizeof(x)) / (sizeof((x)[0])))
 
-#if 0
 static struct atom
 {
     struct atom *link;
-    int len;
-    char *str;
-} * buckets[2048];
-#else
-static struct atom
-{
-    struct atom *link;
+    unsigned long hash;
     int len;
     char str[];
 } * buckets[2048];
-#endif
 
 static unsigned long scatter[] = {
     2078917053, 143302914,  1027100827, 1953210302, 755253631,  2002600785, 1405390230, 45248011,   1099951567,
@@ -53,6 +45,17 @@ static unsigned long scatter[] = {
     1549759737, 1699573055, 776289160,  2143346068, 1975249606, 1136476375, 262925046,  92778659,   1856406685,
     1884137923, 53392249,   1735424165, 1602280572};
 
+static unsigned long do_hash(const char *str, int len)
+{
+    unsigned long h;
+    int i;
+
+    for (h = 0, i = 0; i < len; i++)
+        h = (h << 1) + scatter[(unsigned char)str[i]];
+
+    return h;
+}
+
 const char *Atom_string(const char *str)
 {
     assert(str);
@@ -64,66 +67,64 @@ const char *Atom_int(long n)
     char str[43];
     char *s = str + sizeof str;
     unsigned long m;
+
     if (n == LONG_MIN)
         m = LONG_MAX + 1UL;
     else if (n < 0)
         m = -n;
     else
         m = n;
+
     do
         *--s = m % 10 + '0';
     while ((m /= 10) > 0);
+
     if (n < 0)
         *--s = '-';
+
     return Atom_new(s, (str + sizeof str) - s);
 }
 
 const char *Atom_new(const char *str, int len)
 {
-    unsigned long h;
-    int i;
-    struct atom *p;
     assert(str);
     assert(len >= 0);
-    for (h = 0, i = 0; i < len; i++)
-        h = (h << 1) + scatter[(unsigned char)str[i]];
-    h &= NELEMS(buckets) - 1;
-    for (p = buckets[h]; p; p = p->link)
-        if (len == p->len)
-        {
-            for (i = 0; i < len && p->str[i] == str[i];)
-                i++;
-            if (i == len)
-                return p->str;
-        }
-#if 0
-    p      = ALLOC(sizeof(*p) + len + 1);
-    p->len = len;
-    p->str = (char *)(p + 1);
+
+    struct atom *p;
+    unsigned long hash = do_hash(str, len);
+    unsigned long i    = hash & (NELEMS(buckets) - 1);
+
+    for (p = buckets[i]; p; p = p->link)
+        if (hash == p->hash)
+            return p->str;
+
+    p       = ALLOC(sizeof(*p) + len + 1);
+    p->hash = hash;
+    p->len  = len;
     if (len > 0)
         memcpy(p->str, str, len);
     p->str[len] = '\0';
-#else
-    p      = ALLOC(sizeof(*p) + len + 1);
-    p->len = len;
-    if (len > 0)
-        memcpy(p->str, str, len);
-    p->str[len] = '\0';
-#endif
-    p->link    = buckets[h];
-    buckets[h] = p;
+    p->link     = buckets[i];
+    buckets[i]  = p;
+
     return p->str;
 }
 
 int Atom_length(const char *str)
 {
-    struct atom *p;
-    int i;
     assert(str);
-    for (i = 0; i < NELEMS(buckets); i++)
-        for (p = buckets[i]; p; p = p->link)
-            if (p->str == str)
-                return p->len;
-    assert(0);
+    size_t len = strlen(str);
+    assert(len >= 0);
+
+    struct atom *p;
+    unsigned long hash = do_hash(str, len);
+    unsigned long i    = hash & (NELEMS(buckets) - 1);
+
+    for (p = buckets[i]; p; p = p->link)
+        if (hash == p->hash)
+            return p->len;
+
+    assert(0); /*only atomic string should in this function!*/
+
     return 0;
 }
